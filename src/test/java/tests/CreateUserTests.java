@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static helpers.CustomAllureListener.withCustomTemplates;
+import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -28,24 +30,29 @@ public class CreateUserTests {
 
         UserRequestModel model = new UserRequestModel(expectedName, expectedJob);
 
-        given()
-                .body(model)
-                .contentType(ContentType.JSON)
-                .log().uri()
-                .log().body()
-                .log().headers()
+        UserResponseModel responseModel =
+                step("Make request", () ->
+                     given()
+                            .filter(withCustomTemplates())
+                            .log().uri()
+                            .log().body()
+                            .log().headers()
+                            .body(model)
+                            .contentType(ContentType.JSON)
 
-                .when()
-                .post("")
+                            .when()
+                            .post("")
 
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(201)
-                .extract().as(UserResponseModel.class);
+                            .then()
+                            .log().status()
+                            .log().body()
+                            .statusCode(201)
+                            .extract().as(UserResponseModel.class));
 
-        assertEquals(expectedName, model.getName());
-        assertEquals(expectedJob, model.getJob());
+        step("Check response", () -> {
+            assertEquals(expectedName, responseModel.getName());
+            assertEquals(expectedJob, responseModel.getJob());
+        });
     }
 
     @Test
@@ -55,13 +62,13 @@ public class CreateUserTests {
                 .job(expectedJob)
                 .build();
 
-        given()
-                .body(model)
-                .contentType(ContentType.JSON)
-                .log().uri()
+        UserResponseModel responseModel = given()
+                .filter(withCustomTemplates())
                 .log().uri()
                 .log().body()
                 .log().headers()
+                .body(model)
+                .contentType(ContentType.JSON)
 
                 .when()
                 .post("")
@@ -72,8 +79,8 @@ public class CreateUserTests {
                 .statusCode(201)
                 .extract().as(UserResponseModel.class);
 
-        assertNull(model.getName());
-        assertEquals(expectedJob, model.getJob());
+        assertNull(responseModel.getName());
+        assertEquals(expectedJob, responseModel.getJob());
     }
 }
 
