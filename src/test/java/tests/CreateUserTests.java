@@ -1,18 +1,18 @@
 package tests;
 
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import models.UserRequestModel;
 import models.UserResponseModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static specs.LoginSpec.createUserResponseSpec;
+import static specs.LoginSpec.createUserSpec;
 
 public class CreateUserTests {
     private final String expectedName = "Sting";
@@ -32,22 +32,15 @@ public class CreateUserTests {
 
         UserResponseModel responseModel =
                 step("Make request", () ->
-                     given()
-                            .filter(withCustomTemplates())
-                            .log().uri()
-                            .log().body()
-                            .log().headers()
-                            .body(model)
-                            .contentType(ContentType.JSON)
+                        given(createUserSpec)
+                                .body(model)
 
-                            .when()
-                            .post("")
+                                .when()
+                                .post()
 
-                            .then()
-                            .log().status()
-                            .log().body()
-                            .statusCode(201)
-                            .extract().as(UserResponseModel.class));
+                                .then()
+                                .spec(createUserResponseSpec)
+                                .extract().as(UserResponseModel.class));
 
         step("Check response", () -> {
             assertEquals(expectedName, responseModel.getName());
@@ -62,25 +55,22 @@ public class CreateUserTests {
                 .job(expectedJob)
                 .build();
 
-        UserResponseModel responseModel = given()
-                .filter(withCustomTemplates())
-                .log().uri()
-                .log().body()
-                .log().headers()
-                .body(model)
-                .contentType(ContentType.JSON)
+        UserResponseModel responseModel =
+                step("Make request", () ->
+                        given(createUserSpec)
+                                .body(model)
 
-                .when()
-                .post("")
+                                .when()
+                                .post()
 
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(201)
-                .extract().as(UserResponseModel.class);
+                                .then()
+                                .spec(createUserResponseSpec)
+                                .extract().as(UserResponseModel.class));
 
-        assertNull(responseModel.getName());
-        assertEquals(expectedJob, responseModel.getJob());
+        step("Check response", () -> {
+            assertNull(responseModel.getName());
+            assertEquals(expectedJob, responseModel.getJob());
+        });
     }
 }
 

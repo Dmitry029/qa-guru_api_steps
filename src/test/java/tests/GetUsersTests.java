@@ -68,5 +68,4 @@ public class GetUsersTests {
         List<Integer> actualId = response.jsonPath().getList("data.id");
         assertEquals(expectedId, actualId);
     }
-
 }
