@@ -11,8 +11,8 @@ import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static specs.LoginSpec.createUserResponseSpec;
-import static specs.LoginSpec.createUserSpec;
+import static specs.CreateUserSpec.createUserResponseSpec;
+import static specs.CreateUserSpec.createUserSpec;
 
 public class CreateUserTests {
     private final String expectedName = "Sting";

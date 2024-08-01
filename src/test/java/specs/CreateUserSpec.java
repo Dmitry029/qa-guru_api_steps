@@ -10,7 +10,7 @@ import static io.restassured.filter.log.LogDetail.BODY;
 import static io.restassured.filter.log.LogDetail.STATUS;
 import static io.restassured.http.ContentType.JSON;
 
-public class LoginSpec {
+public class CreateUserSpec {
     public static RequestSpecification createUserSpec = with()
             .filter(withCustomTemplates())
             .log().uri()
@@ -20,12 +20,6 @@ public class LoginSpec {
 
     public static ResponseSpecification createUserResponseSpec = new ResponseSpecBuilder()
             .expectStatusCode(201)
-            .log(STATUS)
-            .log(BODY)
-            .build();
-
-    public static ResponseSpecification missingPasswordResponseSpec = new ResponseSpecBuilder()
-            .expectStatusCode(400)
             .log(STATUS)
             .log(BODY)
             .build();

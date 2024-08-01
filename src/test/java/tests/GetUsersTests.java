@@ -2,7 +2,7 @@ package tests;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import models.UserResponseModel;
+import models.UserDataModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,11 +13,12 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetUsersTests {
 
     @BeforeAll
-    public static void setUp(){
+    public static void setUp() {
         RestAssured.baseURI = "https://reqres.in";
         RestAssured.basePath = "/api";
     }
@@ -67,5 +68,22 @@ public class GetUsersTests {
                 .extract().response();
         List<Integer> actualId = response.jsonPath().getList("data.id");
         assertEquals(expectedId, actualId);
+    }
+
+    @Test
+    @DisplayName("Проверить, что у всех пользователей почта оканчивается на @regres.in")
+    void compare() {
+        String expectedEndOfEmail = "@reqres.in";
+        List<UserDataModel> users = given()
+                .log().uri()
+                .when()
+                .get("/users?page2")
+                .then()
+                .log().status()
+                .log().body()
+                .statusCode(200)
+                .extract().body().jsonPath().getList("data", UserDataModel.class);
+
+        assertTrue(users.stream().allMatch(e -> e.getEmail().endsWith(expectedEndOfEmail)));
     }
 }
