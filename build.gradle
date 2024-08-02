@@ -29,7 +29,6 @@ allure {
 dependencies {
     testImplementation(
             "io.rest-assured:rest-assured:$restAssuredVersion",
-            "com.fasterxml.jackson.core:jackson-databind:2.17.2",
             "io.rest-assured:json-schema-validator:$restAssuredVersion",
             "io.qameta.allure:allure-rest-assured:$allureVersion",
             "org.junit.jupiter:junit-jupiter:$junitVersion",
