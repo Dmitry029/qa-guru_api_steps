@@ -9,11 +9,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static specs.GetUserSpec.getUserResponseSpec;
+import static specs.GetUserSpec.getUserSpec;
 
 public class GetUsersTests {
 
@@ -27,14 +30,11 @@ public class GetUsersTests {
     @DisplayName("Получить размер списка всех пользователей")
     void getSizeOfAllUsersList() {
         int allUsers = 12;
-        given()
-                .log().uri()
+        given(getUserSpec)
                 .when()
                 .get("/users?page2")
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
+                .spec(getUserResponseSpec)
                 .body("total", is(allUsers));
     }
 
@@ -42,14 +42,11 @@ public class GetUsersTests {
     @DisplayName("Получить размер списка пользователей на странице")
     void getUsersListSizeOnThePage() {
         int usersListSize = 6;
-        given()
-                .log().uri()
+        given(getUserSpec)
                 .when()
                 .get("/users?page2")
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
+                .spec(getUserResponseSpec)
                 .body("data", hasSize(usersListSize));
     }
 
@@ -57,33 +54,33 @@ public class GetUsersTests {
     @DisplayName("Сравнить ожидаемый список Id с полученным после запроса")
     void compareExpectedListOfIdsAndActual() {
         List<Integer> expectedId = List.of(1, 2, 3, 4, 5, 6);
-        Response response = given()
-                .log().uri()
-                .when()
-                .get("/users?page2")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .extract().response();
-        List<Integer> actualId = response.jsonPath().getList("data.id");
-        assertEquals(expectedId, actualId);
+        Response response =
+                step("Make request", () -> given(getUserSpec)
+                        .when()
+                        .get("/users?page2")
+                        .then()
+                        .spec(getUserResponseSpec)
+                        .extract().response());
+
+        step("Check response", () -> {
+            List<Integer> actualId = response.jsonPath().getList("data.id");
+            assertEquals(expectedId, actualId);
+        });
     }
 
     @Test
     @DisplayName("Проверить, что у всех пользователей почта оканчивается на @regres.in")
     void compare() {
         String expectedEndOfEmail = "@reqres.in";
-        List<UserDataModel> users = given()
-                .log().uri()
-                .when()
-                .get("/users?page2")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .extract().body().jsonPath().getList("data", UserDataModel.class);
+        List<UserDataModel> users =
+                step("Make request", () -> given(getUserSpec)
+                        .when()
+                        .get("/users?page2")
+                        .then()
+                        .spec(getUserResponseSpec)
+                        .extract().body().jsonPath().getList("data", UserDataModel.class));
 
-        assertTrue(users.stream().allMatch(e -> e.getEmail().endsWith(expectedEndOfEmail)));
+        step("Check response", () ->
+                assertTrue(users.stream().allMatch(e -> e.getEmail().endsWith(expectedEndOfEmail))));
     }
 }
