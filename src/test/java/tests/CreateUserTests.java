@@ -5,6 +5,7 @@ import models.UserRequestModel;
 import models.UserResponseModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static io.qameta.allure.Allure.step;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static specs.CreateUserSpec.createUserResponseSpec;
 import static specs.CreateUserSpec.createUserSpec;
-
+@Tag("regression")
 public class CreateUserTests {
     private final String expectedName = "Sting";
     private final String expectedJob = "singer";
@@ -24,6 +25,7 @@ public class CreateUserTests {
         RestAssured.basePath = "/api/users";
     }
 
+    @Tag("smoke")
     @Test
     @DisplayName("Создать пользователя со всеми полями")
     void createUserTest() {

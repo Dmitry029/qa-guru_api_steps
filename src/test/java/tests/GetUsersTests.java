@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import models.UserDataModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static specs.GetUserSpec.getUserResponseSpec;
 import static specs.GetUserSpec.getUserSpec;
-
+@Tag("regression")
 public class GetUsersTests {
 
     @BeforeAll
@@ -25,7 +26,7 @@ public class GetUsersTests {
         RestAssured.baseURI = "https://reqres.in";
         RestAssured.basePath = "/api";
     }
-
+    @Tag("smoke")
     @Test
     @DisplayName("Получить размер списка всех пользователей")
     void getSizeOfAllUsersList() {

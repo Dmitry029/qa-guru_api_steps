@@ -42,11 +42,20 @@ tasks.withType(JavaCompile) {
 
 tasks.withType(Test) {
     useJUnitPlatform()
-
+    systemProperties(System.getProperties())
     testLogging {
         lifecycle {
             events "started", "skipped", "failed", "standard_error", "standard_out"
             exceptionFormat "short"
+        }
+    }
+}
+
+tasks.withType(Test) {
+    systemProperties(System.getProperties())
+    useJUnitPlatform {
+        if (System.getProperty("type") != null && !System.getProperty("type").isEmpty()) {
+            includeTags (System.getProperty("type"))
         }
     }
 }
